@@ -1,0 +1,30 @@
+version: "3.7"
+services:
+  # api_server:
+  #   container_name: chronicler_api
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 8181:8181
+  #     - 80:80
+  #   depends_on:
+  #     - db
+
+  db:
+    container_name: chronicler_db
+    image: postgres
+    restart: always
+    volumes:
+      - chronicler-data:/var/lib/postgresql/data
+    ports:
+      - 8082:5432
+    environment:
+      POSTGRES_DB: chronicler_db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      
+
+volumes:
+  chronicler-data:
+    driver: local
