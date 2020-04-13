@@ -1,3 +1,6 @@
+extern crate openssl;
+extern crate diesel;
+
 use chronicler::*;
 use chronicler::models::{NewPost,Post};
 use serde::{Serialize, Deserialize};
@@ -32,8 +35,9 @@ struct PostByIdWithPublished {
 #[tokio::main]
 async fn main() -> Result<()> {
     let mut app = tide::new();
-    let addr = format!("0.0.0.0:{port}", port=get_server_port());
+    let addr = format!("{host}:{port}", port=get_server_port(), host=get_server_host());
 
+    app.at("/").get(|_| async move { "Hello, world!" });
     app.at("/create-post").post(|mut req: tide::Request<()>| async move {
         match req.body_json().await {
             Ok(json) => {

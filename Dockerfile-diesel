@@ -1,0 +1,14 @@
+FROM rust:latest as builder
+
+COPY . .
+RUN cargo install diesel_cli --no-default-features --features postgres
+# RUN diesel migration run --database-url=${DATABASE_URL}
+# RUN cargo install diesel_cli --no-default-features --features postgres
+# RUN mkdir -p /out && cp /usr/local/cargo/bin/diesel /out/
+
+# FROM alpine:latest
+# COPY --from=builder /out/diesel /bin/
+
+# RUN apk add --no-cache ca-certificates
+
+# CMD diesel

@@ -1,0 +1,15 @@
+setup:
+  addons:
+    - plan: heroku-postgresql
+      as: DATABASE
+build:
+  docker:
+    # release: 
+    #   dockerfile: Dockerfile
+    #   target: build
+    web: Dockerfile
+    diesel: Dockerfile-diesel
+release:
+  image: diesel
+  command:
+    - diesel migration run

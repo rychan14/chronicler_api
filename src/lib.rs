@@ -17,6 +17,13 @@ pub fn get_server_port() -> u16 {
   .unwrap_or(8181)
 }
 
+pub fn get_server_host() -> String {
+    env::var("HOST")
+    .ok()
+    .and_then(|p| p.parse().ok())
+    .unwrap_or("0.0.0.0".to_string())
+  }
+
 pub fn get_db_url() -> String {
   env::var("DATABASE_URL")
   .ok()
