@@ -4,7 +4,7 @@ services:
     container_name: chronicler_api
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.deploy
     ports:
       - 8181:8181
       - 80:80
