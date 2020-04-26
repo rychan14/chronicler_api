@@ -4,11 +4,8 @@ setup:
       as: DATABASE
 build:
   docker:
-    # release: 
-    #   dockerfile: Dockerfile
-    #   target: build
     web: Dockerfile
-    diesel: Dockerfile-diesel
+    diesel: Dockerfile.diesel
 release:
   image: diesel
   command:

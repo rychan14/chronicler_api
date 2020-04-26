@@ -1,15 +1,15 @@
 version: "3.7"
 services:
-  # api_server:
-  #   container_name: chronicler_api
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - 8181:8181
-  #     - 80:80
-  #   depends_on:
-  #     - db
+  api_server:
+    container_name: chronicler_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8181:8181
+      - 80:80
+    depends_on:
+      - db
 
   db:
     container_name: chronicler_db
