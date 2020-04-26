@@ -1,0 +1,8 @@
+FROM rychan14/chronicler_docker as build
+COPY . .
+RUN cargo build --release
+
+FROM alpine
+COPY --from=build /home/rust/src/target/x86_64-unknown-linux-musl/release/chronicler /
+EXPOSE ${PORT}
+CMD ["/chronicler"]
