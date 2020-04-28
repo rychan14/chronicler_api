@@ -2,9 +2,12 @@ extern crate openssl;
 extern crate diesel;
 
 use chronicler::*;
-use chronicler::models::{NewPost,Post};
+use chronicler::models::{Post};
 use serde::{Serialize, Deserialize};
 use serde_json::json;
+use tide::StatusCode;
+use tide::security::{CorsMiddleware, Origin};
+use tide::http::headers::HeaderValue;
 
 // type GenericError = Box<dyn std::error::Error + Send + Sync>;
 type GenericError = Box<dyn std::error::Error>;
@@ -37,7 +40,12 @@ async fn main() -> Result<()> {
     let mut app = tide::new();
     let addr = format!("{host}:{port}", port=get_server_port(), host=get_server_host());
 
-    app.at("/").get(|_| async move { "Hello, world!" });
+    let cors_middleware = CorsMiddleware::new()
+        .allow_methods("GET, POST, OPTIONS".parse::<HeaderValue>().unwrap())
+        .allow_origin(Origin::from("*"))
+        .allow_credentials(false);
+        
+    app.at("/").get(|_| async move { Ok("Hello, world!") });
     app.at("/create-post").post(|mut req: tide::Request<()>| async move {
         match req.body_json().await {
             Ok(json) => {
@@ -49,7 +57,7 @@ async fn main() -> Result<()> {
                         "body": json_value.body,
                     }
                 });
-                tide::Response::new(200).body_json(&post).unwrap()
+                Ok(tide::Response::new(StatusCode::Ok).body_json(&post)?)
             },
             Err(e) => {
                 let post = json!(ErrorResponse {
@@ -60,7 +68,7 @@ async fn main() -> Result<()> {
                         }
                     ]
                 });
-                tide::Response::new(400).body_json(&post).unwrap()
+                Ok(tide::Response::new(StatusCode::BadRequest).body_json(&post)?)
             }
         }
     });
@@ -68,7 +76,7 @@ async fn main() -> Result<()> {
         let res = json!({
             "data": show_posts()
         });
-        tide::Response::new(200).body_json(&res).unwrap()
+        Ok(tide::Response::new(StatusCode::Ok).body_json(&res)?)
     });
     app.at("/delete-post").post(|mut req: tide::Request<()>| async move {
         match req.body_json().await {
@@ -89,7 +97,7 @@ async fn main() -> Result<()> {
                         ]
                     }),
                 };
-                tide::Response::new(200).body_json(&post).unwrap()
+                Ok(tide::Response::new(StatusCode::Ok).body_json(&post)?)
             },
             Err(e) => {
                 let post = json!(ErrorResponse {
@@ -100,7 +108,7 @@ async fn main() -> Result<()> {
                         }
                     ]
                 });
-                tide::Response::new(400).body_json(&post).unwrap()
+                Ok(tide::Response::new(StatusCode::BadRequest).body_json(&post)?)
             }
         }
     });
@@ -111,7 +119,7 @@ async fn main() -> Result<()> {
                 let post = json!({
                     "data": format!("Toggled post with id: {:?}", toggle_post(json_value.id, json_value.published).unwrap())
                 });
-                tide::Response::new(200).body_json(&post).unwrap()
+                Ok(tide::Response::new(StatusCode::Ok).body_json(&post)?)
             },
             
             Err(e) => {
@@ -123,11 +131,12 @@ async fn main() -> Result<()> {
                         }
                     ]
                 });
-                tide::Response::new(400).body_json(&post).unwrap()
+                Ok(tide::Response::new(StatusCode::BadRequest).body_json(&post)?)
             }
         }
     });
     println!("Listening on http://{}", addr);
+    app.middleware(cors_middleware);
     app.listen(addr).await?;
 
     Ok(())
