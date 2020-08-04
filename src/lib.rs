@@ -28,7 +28,7 @@ pub fn get_db_url() -> String {
   env::var("DATABASE_URL")
   .ok()
   .and_then(|p| p.parse().ok())
-  .unwrap_or("postgres://root:password@localhost:8082/chronicler_db".to_string())
+  .unwrap_or("postgres://root:password@chronicler_db:5432/chronicler_db".to_string())
 }
 
 pub fn establish_connection() -> PgConnection {

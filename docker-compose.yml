@@ -18,7 +18,7 @@ services:
     volumes:
       - chronicler-data:/var/lib/postgresql/data
     ports:
-      - 8082:5432
+      - 8083:5432
     environment:
       POSTGRES_DB: chronicler_db
       POSTGRES_USER: root
